@@ -1,7 +1,7 @@
 package ui;
 
 import modulos.Auditoria;
-import modelos.RegistroAuditoria;
+import Modelos.RegistroAuditoria;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package modelos;
+package Modelos;
 
 import java.sql.Timestamp;
 

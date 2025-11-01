@@ -1,7 +1,7 @@
 package modulos;
 
 import conexion.ConexionBD;
-import modelos.RegistroAuditoria;
+import Modelos.RegistroAuditoria;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
