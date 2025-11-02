@@ -1,0 +1,16 @@
+;;; 
+Export: Release 21.0.0.0.0 - Production on Dom Nov 2 13:35:56 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle and/or its affiliates.  All rights reserved.
+;;; 
+Conectado a: Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Iniciando "MIADMIN"."SYS_EXPORT_SCHEMA_01":  miadmin/********@localhost:1521/XEPDB1 schemas=TEST1 directory=BACKUP_DIR dumpfile=backup_schema_TEST1_2025-11-02_13-35-56.dmp logfile=backup_schema_TEST1_2025-11-02_13-35-56.log 
+Procesando el tipo de objeto SCHEMA_EXPORT/USER
+Procesando el tipo de objeto SCHEMA_EXPORT/DEFAULT_ROLE
+Procesando el tipo de objeto SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+La tabla maestra "MIADMIN"."SYS_EXPORT_SCHEMA_01" se ha cargado/descargado correctamente
+******************************************************************************
+El juego de archivos de volcado para MIADMIN.SYS_EXPORT_SCHEMA_01 es:
+  D:\UNIVERSIDADGERALD\XAMPP\HTDOCS\PROYECTO_BD\RESOURCES\BACKUPS\BACKUP_SCHEMA_TEST1_2025-11-02_13-35-56.DMP
+El trabajo "MIADMIN"."SYS_EXPORT_SCHEMA_01" ha terminado correctamente en Dom Nov 2 13:36:09 2025 elapsed 0 00:00:10
