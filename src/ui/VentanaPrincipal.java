@@ -50,10 +50,9 @@ public class VentanaPrincipal extends JFrame {
 
         JButton btnTablespaces = crearBoton("Administración de Tablespaces");
         btnTablespaces.addActionListener(e -> {
-            // TODO: Agregar funcionalidad de administración de tablespaces aquí
-            JOptionPane.showMessageDialog(this,
-                    "Este módulo será desarrollado por el compañero encargado de Tablespaces.",
-                    "Módulo pendiente", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+            ui.tablespaces.VentanaTablespaces ventana = new ui.tablespaces.VentanaTablespaces();
+            ventana.setVisible(true);
         });
 
         JButton btnBackups = crearBoton("Gestión de Respaldos y Recuperación");
