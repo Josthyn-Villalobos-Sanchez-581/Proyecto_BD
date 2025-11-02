@@ -6,9 +6,10 @@ import java.sql.SQLException;
 
 public class ConexionBD {
 
-    private static final String URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
-    private static final String USER = "sys as sysdba";
+    private static final String USER = "miadmin";
     private static final String PASSWORD = "rootroot";
+    private static final String URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
+
 
     public static Connection conectar() {
         Connection conn = null;

@@ -1,0 +1,22 @@
+;;; 
+Import: Release 21.0.0.0.0 - Production on Sáb Nov 1 18:04:35 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle and/or its affiliates.  All rights reserved.
+;;; 
+Conectado a: Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+La tabla maestra "MIADMIN"."SYS_IMPORT_SCHEMA_01" se ha cargado/descargado correctamente
+Iniciando "MIADMIN"."SYS_IMPORT_SCHEMA_01":  miadmin/********@localhost:1521/XEPDB1 directory=BACKUP_DIR dumpfile=BACKUP_SCHEMA_PRUEBA_2025-11-01_18-00-52.DMP logfile=restore_BACKUP_SCHEMA_PRUEBA_2025-11-01_18-00-52.DMP.log schemas=prueba 
+Procesando el tipo de objeto SCHEMA_EXPORT/USER
+Procesando el tipo de objeto SCHEMA_EXPORT/SYSTEM_GRANT
+Procesando el tipo de objeto SCHEMA_EXPORT/DEFAULT_ROLE
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLESPACE_QUOTA
+Procesando el tipo de objeto SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLE/TABLE
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLE/TABLE_DATA
+. . "PRUEBA"."TABLA_PRUEBA"                         0 KB       0 filas importadas
+. . "PRUEBA"."TABLA_PRUEBA2"                        0 KB       0 filas importadas
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Procesando el tipo de objeto SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+El trabajo "MIADMIN"."SYS_IMPORT_SCHEMA_01" ha terminado correctamente en Sáb Nov 1 18:04:40 2025 elapsed 0 00:00:03

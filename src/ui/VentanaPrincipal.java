@@ -58,10 +58,9 @@ public class VentanaPrincipal extends JFrame {
 
         JButton btnBackups = crearBoton("Gestión de Respaldos y Recuperación");
         btnBackups.addActionListener(e -> {
-            // TODO: Agregar funcionalidad de backups aquí
-            JOptionPane.showMessageDialog(this,
-                    "Este módulo será desarrollado por el compañero encargado de Respaldos.",
-                    "Módulo pendiente", JOptionPane.INFORMATION_MESSAGE);
+            dispose(); // cierra la ventana principal
+            VentanaBackupRestore ventana = new VentanaBackupRestore();
+            ventana.setVisible(true);
         });
 
         JButton btnPerformance = crearBoton("Performance de la Base de Datos");
