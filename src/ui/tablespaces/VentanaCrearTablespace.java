@@ -6,11 +6,12 @@ import java.awt.*;
 
 public class VentanaCrearTablespace extends JFrame {
     private JTextField txtNombre, txtRuta, txtSize;
+    private JCheckBox chkTemp;
     private Tablespaces ts = new Tablespaces();
 
     public VentanaCrearTablespace() {
         setTitle("Crear Tablespace");
-        setSize(480, 300);
+        setSize(480, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -18,11 +19,11 @@ public class VentanaCrearTablespace extends JFrame {
 
         JLabel lbl = new JLabel("Crear nuevo Tablespace", JLabel.CENTER);
         lbl.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lbl.setBorder(BorderFactory.createEmptyBorder(12,0,12,0));
+        lbl.setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
         add(lbl, BorderLayout.NORTH);
 
-        JPanel panel = new JPanel(new GridLayout(3,2,12,12));
-        panel.setBorder(BorderFactory.createEmptyBorder(18,36,18,36));
+        JPanel panel = new JPanel(new GridLayout(4, 2, 12, 12));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 36, 18, 36));
         panel.setBackground(Color.WHITE);
 
         panel.add(new JLabel("Nombre Tablespace:", JLabel.RIGHT));
@@ -37,10 +38,16 @@ public class VentanaCrearTablespace extends JFrame {
         txtSize = new JTextField("50");
         panel.add(txtSize);
 
+        panel.add(new JLabel("Tipo:", JLabel.RIGHT));
+        chkTemp = new JCheckBox("¿Temporal (TEMPORARY)?");
+        chkTemp.setBackground(Color.WHITE);
+        panel.add(chkTemp);
+
         add(panel, BorderLayout.CENTER);
 
         JPanel pBot = new JPanel();
         pBot.setBackground(Color.WHITE);
+
         JButton btnCrear = new JButton("Crear");
         btnCrear.addActionListener(e -> {
             String nombre = txtNombre.getText().trim();
@@ -63,7 +70,7 @@ public class VentanaCrearTablespace extends JFrame {
                 return;
             }
 
-            boolean ok = ts.crearTablespace(nombre.toUpperCase(), ruta, size);
+            boolean ok = ts.crearTablespace(nombre.toUpperCase(), ruta, size, chkTemp.isSelected());
             if (ok) {
                 JOptionPane.showMessageDialog(this, "Tablespace creado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {

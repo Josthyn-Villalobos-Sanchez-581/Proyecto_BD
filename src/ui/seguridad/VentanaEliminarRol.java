@@ -11,14 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class VentanaCrearUsuario extends JFrame {
+public class VentanaEliminarRol extends JFrame {
 
-    private JTextField txtUsuario;
-    private JPasswordField txtContrasena;
+    private JTextField txtRol;
     private Seguridad seguridad = new Seguridad();
 
-    public VentanaCrearUsuario() {
-        setTitle("Crear Usuario - Oracle XE");
+    public VentanaEliminarRol() {
+        setTitle("Eliminar Rol - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -26,91 +25,74 @@ public class VentanaCrearUsuario extends JFrame {
         fondo.setLayout(new BorderLayout());
         setContentPane(fondo);
 
-        // === Título ===
-        JLabel lblTitulo = new JLabel("Creación de Nuevo Usuario en Oracle", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel("Eliminar Rol del Sistema", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === Panel central ===
-        JPanel panelCentral = new JPanel(new GridLayout(2, 2, 25, 25));
+        JPanel panelCentral = new JPanel(new GridLayout(2, 2, 20, 20));
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(150, 400, 150, 400));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(100, 400, 100, 400));
 
-        panelCentral.add(crearLabel("Nombre de Usuario:"));
-        txtUsuario = crearCampoTexto();
-        panelCentral.add(txtUsuario);
-
-        panelCentral.add(crearLabel("Contraseña:"));
-        txtContrasena = new JPasswordField();
-        txtContrasena.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-        panelCentral.add(txtContrasena);
+        panelCentral.add(crearLabel("Nombre del Rol:"));
+        txtRol = crearCampoTexto();
+        panelCentral.add(txtRol);
 
         fondo.add(panelCentral, BorderLayout.CENTER);
 
-        // === Panel inferior ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnCrear = crearBoton("Crear Usuario", e -> crearUsuario());
+        JButton btnEliminar = crearBoton("Eliminar Rol", e -> eliminarRol());
         JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
-
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaSeguridad().setVisible(true);
         });
 
-        pie.add(btnCrear);
+        pie.add(btnEliminar);
         pie.add(btnRegresar);
         fondo.add(pie, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    // === Acción principal ===
-    private void crearUsuario() {
-        String usuario = txtUsuario.getText().trim();
-        String contrasena = new String(txtContrasena.getPassword()).trim();
-
-        if (usuario.isEmpty() || contrasena.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Debe ingresar tanto el nombre de usuario como la contraseña.",
-                    "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+    private void eliminarRol() {
+        String rol = txtRol.getText().trim();
+        if (rol.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de rol.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        // ✅ Nueva implementación con OperacionResultado
         try {
-            OperacionResultado res = seguridad.crearUsuario(usuario, contrasena);
+            OperacionResultado res = seguridad.eliminarRol(rol);
 
             if (res.isExito()) {
-                JOptionPane.showMessageDialog(this,
-                        res.getMensaje(),
-                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, res.getMensaje(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this,
-                        res.getMensaje(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, res.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
-                    "Error inesperado al crear usuario:\n" + ex.getMessage(),
+                    "Ocurrió un error inesperado al eliminar el rol:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // === Componentes reutilizables ===
+    // === Componentes visuales reutilizables ===
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto, JLabel.RIGHT);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         return campo;
     }
 
@@ -122,10 +104,8 @@ public class VentanaCrearUsuario extends JFrame {
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(250, 55));
-        boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        boton.setPreferredSize(new Dimension(220, 55));
 
-        // Botón redondeado con hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -190,11 +170,9 @@ public class VentanaCrearUsuario extends JFrame {
             setBackground(new Color(10, 12, 18));
             for (int i = 0; i < 40; i++)
                 nodos.add(new Nodo(rand.nextInt(1920), rand.nextInt(1080), rand.nextInt(2) + 1));
-
             Timer timer = new Timer(40, e -> {
                 for (Nodo n : nodos) {
-                    n.x += n.vx;
-                    n.y += n.vy;
+                    n.x += n.vx; n.y += n.vy;
                     if (n.x < 0 || n.x > 1920) n.vx *= -1;
                     if (n.y < 0 || n.y > 1080) n.vy *= -1;
                 }
