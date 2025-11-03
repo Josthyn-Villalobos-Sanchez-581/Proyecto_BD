@@ -2,6 +2,9 @@ package modulos;
 
 import conexion.ConexionBD;
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
+
 
 public class Seguridad {
 
@@ -186,22 +189,36 @@ public class Seguridad {
         }
     }
 
-    public OperacionResultado asignarPrivilegioTabla(String usuario, String tabla, String privilegio) {
-        try (Connection conn = ConexionBD.conectar()) {
+    public OperacionResultado asignarPrivilegiosDeSchema(String usuario, List<String> privilegiosSeleccionados) {
+        try (Connection conn = ConexionBD.conectar();
+             Statement st = conn.createStatement()) {
+
             if (!existeUsuario(conn, usuario)) {
                 return new OperacionResultado(false, "El usuario '" + usuario + "' no existe.");
             }
 
-            String sql = "GRANT " + privilegio + " ON " + tabla + " TO " + usuario;
-            try (Statement st = conn.createStatement()) {
-                st.execute(sql);
-                return new OperacionResultado(true, "Privilegio '" + privilegio + "' asignado al usuario '" + usuario + "'.");
+            if (privilegiosSeleccionados == null || privilegiosSeleccionados.isEmpty()) {
+                return new OperacionResultado(false, "No se seleccionaron privilegios para asignar.");
             }
 
+            for (String privilegio : privilegiosSeleccionados) {
+                try {
+                    st.execute("GRANT " + privilegio + " TO " + usuario);
+                    System.out.println("✅ Privilegio otorgado: " + privilegio + " a " + usuario);
+                } catch (SQLException e) {
+                    System.out.println("⚠ Error al otorgar privilegio " + privilegio + ": " + e.getMessage());
+                }
+            }
+
+            return new OperacionResultado(true,
+                    "Privilegios asignados correctamente al usuario '" + usuario + "'.");
+
         } catch (SQLException e) {
-            return new OperacionResultado(false, "Error al asignar privilegio: " + e.getMessage());
+            return new OperacionResultado(false, "Error al asignar privilegios: " + e.getMessage());
         }
     }
+
+
 
     public OperacionResultado revocarPrivilegioTabla(String usuario, String tabla, String privilegio) {
         try (Connection conn = ConexionBD.conectar()) {
