@@ -13,7 +13,7 @@ public class VentanaBackupRestore extends JFrame {
     private final BackupRestore br = new BackupRestore();
 
     public VentanaBackupRestore() {
-        setTitle("💾 Respaldo y Recuperación - Oracle XE");
+        setTitle("💾 Módulo de Respaldo y Recuperación - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -23,64 +23,133 @@ public class VentanaBackupRestore extends JFrame {
         setContentPane(fondo);
 
         // === ENCABEZADO ===
-        JLabel lblTitulo = new JLabel("Módulo de Respaldo y Recuperación - Oracle XE", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel("Respaldo y Recuperación de la Base de Datos", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === PANEL CENTRAL ===
-        JPanel panel = new JPanel(new GridLayout(3, 2, 35, 35));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(60, 220, 60, 220));
+        // === PANEL CENTRAL CON TARJETAS ===
+        JPanel panelTarjetas = new JPanel(new GridLayout(2, 3, 35, 35));
+        panelTarjetas.setOpaque(false);
+        panelTarjetas.setBorder(BorderFactory.createEmptyBorder(60, 150, 60, 150));
 
-        // === BOTONES DE FUNCIONALIDAD ===
-        JButton btnFull = crearBoton("📀 Respaldo Completo (FULL)", new Color(0, 140, 255));
-        btnFull.addActionListener(e -> ejecutarBackupFull());
+        // === TARJETAS DE FUNCIONALIDAD ===
+        panelTarjetas.add(crearTarjeta("📀", "Respaldo Completo (FULL)", "Genera un respaldo completo de toda la base de datos.", e -> ejecutarBackupFull()));
+        panelTarjetas.add(crearTarjeta("🧩", "Respaldo por Esquema", "Crea un respaldo de un esquema específico.", e -> ejecutarBackupSchema()));
+        panelTarjetas.add(crearTarjeta("📋", "Respaldo por Tabla", "Genera un respaldo de una tabla específica.", e -> ejecutarBackupTabla()));
+        panelTarjetas.add(crearTarjeta("♻️", "Restaurar Respaldo", "Permite restaurar respaldos previos (FULL, SCHEMA o TABLE).", e -> ejecutarRestore()));
+        panelTarjetas.add(crearTarjeta("📂", "Ver Carpeta de Backups", "Abre la carpeta donde se guardan los respaldos y logs.", e -> abrirCarpeta()));
 
-        JButton btnSchema = crearBoton("🧩 Respaldo por Esquema", new Color(0, 140, 255));
-        btnSchema.addActionListener(e -> ejecutarBackupSchema());
+        fondo.add(panelTarjetas, BorderLayout.CENTER);
 
-        JButton btnTabla = crearBoton("📋 Respaldo por Tabla", new Color(0, 140, 255));
-        btnTabla.addActionListener(e -> ejecutarBackupTabla());
+        // === PIE DE PÁGINA (BOTÓN VOLVER) ===
+        JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 25));
+        pie.setOpaque(false);
 
-        JButton btnRestore = crearBoton("♻️ Restaurar Respaldo", new Color(0, 140, 255));
-        btnRestore.addActionListener(e -> ejecutarRestore());
-
-        JButton btnVerLogs = crearBoton("📂 Ver Carpeta de Backups / Logs", new Color(0, 140, 255));
-        btnVerLogs.addActionListener(e -> abrirCarpeta());
-
-        // === BOTÓN VOLVER ===
-        JButton btnRegresar = crearBoton("⏪ Volver al Menú Principal", new Color(190, 50, 50));
-        btnRegresar.addActionListener(e -> {
+        JButton btnVolver = crearBotonInferior("⏪ Volver al Menú Principal", new Color(190, 50, 50));
+        btnVolver.addActionListener(e -> {
             dispose();
             new VentanaPrincipal().setVisible(true);
         });
 
-        // === AGREGAR BOTONES AL PANEL ===
-        panel.add(btnFull);
-        panel.add(btnSchema);
-        panel.add(btnTabla);
-        panel.add(btnRestore);
-        panel.add(btnVerLogs);
-        panel.add(btnRegresar);
-
-        fondo.add(panel, BorderLayout.CENTER);
+        pie.add(btnVolver);
+        fondo.add(pie, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    // === BOTÓN MODERNO REDONDEADO ===
-    private JButton crearBoton(String texto, Color color) {
+    // === TARJETA MODERNA ===
+    private JPanel crearTarjeta(String icono, String titulo, String descripcion, ActionListener action) {
+        JPanel card = new JPanel(new BorderLayout(10, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(25, 30, 45, 220));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+            }
+        };
+        card.setOpaque(false);
+        card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JLabel lblIcono = new JLabel(icono, JLabel.CENTER);
+        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
+        lblIcono.setForeground(new Color(0, 220, 255));
+
+        JLabel lblTitulo = new JLabel(titulo, JLabel.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        lblTitulo.setForeground(new Color(0, 220, 255));
+
+        JTextArea lblDesc = new JTextArea(descripcion);
+        lblDesc.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblDesc.setForeground(new Color(200, 210, 230));
+        lblDesc.setOpaque(false);
+        lblDesc.setEditable(false);
+        lblDesc.setWrapStyleWord(true);
+        lblDesc.setLineWrap(true);
+        lblDesc.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+
+        JButton btnAccion = new JButton("Ejecutar");
+        btnAccion.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnAccion.setForeground(Color.WHITE);
+        btnAccion.setBackground(new Color(0, 120, 255));
+        btnAccion.setFocusPainted(false);
+        btnAccion.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btnAccion.addActionListener(action);
+
+        // Hover suave
+        btnAccion.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                btnAccion.setBackground(new Color(0, 180, 255));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                btnAccion.setBackground(new Color(0, 120, 255));
+            }
+        });
+
+        card.add(lblIcono, BorderLayout.NORTH);
+        card.add(lblTitulo, BorderLayout.CENTER);
+        card.add(lblDesc, BorderLayout.SOUTH);
+
+        JPanel panelBoton = new JPanel();
+        panelBoton.setOpaque(false);
+        panelBoton.add(btnAccion);
+        card.add(panelBoton, BorderLayout.PAGE_END);
+
+        // Hover de tarjeta
+        card.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                card.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(0, 240, 255), 2, true),
+                        BorderFactory.createEmptyBorder(18, 18, 18, 18)
+                ));
+                lblIcono.setForeground(new Color(0, 255, 255));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                lblIcono.setForeground(new Color(0, 220, 255));
+            }
+        });
+
+        return card;
+    }
+
+    // === BOTÓN INFERIOR ESTILIZADO ===
+    private JButton crearBotonInferior(String texto, Color colorBase) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
-        boton.setBackground(color);
+        boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        boton.setPreferredSize(new Dimension(280, 50));
         boton.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
 
-        // Redondeado y suavizado
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -92,21 +161,20 @@ public class VentanaBackupRestore extends JFrame {
             }
         });
 
-        // Hover suave
         boton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                boton.setBackground(color.brighter());
+                boton.setBackground(colorBase.brighter());
             }
 
             public void mouseExited(MouseEvent e) {
-                boton.setBackground(color);
+                boton.setBackground(colorBase);
             }
         });
 
         return boton;
     }
 
-    // === ACCIONES DE LOS BOTONES ===
+    // === ACCIONES ===
     private void ejecutarBackupFull() {
         SwingUtilities.invokeLater(() -> {
             String ruta = br.realizarBackupFull();
@@ -121,8 +189,9 @@ public class VentanaBackupRestore extends JFrame {
     private void ejecutarBackupSchema() {
         String schema = JOptionPane.showInputDialog(this, "Ingrese nombre de esquema (schema):", "SCHEMA", JOptionPane.PLAIN_MESSAGE);
         if (schema != null && !schema.trim().isEmpty()) {
+            final String schemaFinal = schema.trim().toUpperCase();
             SwingUtilities.invokeLater(() -> {
-                String ruta = br.realizarBackupPorSchema(schema.trim().toUpperCase());
+                String ruta = br.realizarBackupPorSchema(schemaFinal);
                 if (ruta != null) {
                     JOptionPane.showMessageDialog(this, "✅ Backup de esquema creado:\n" + ruta, "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -136,8 +205,10 @@ public class VentanaBackupRestore extends JFrame {
         String schema = JOptionPane.showInputDialog(this, "Ingrese nombre de esquema (schema):", "SCHEMA", JOptionPane.PLAIN_MESSAGE);
         String tabla = JOptionPane.showInputDialog(this, "Ingrese nombre de tabla:", "TABLE", JOptionPane.PLAIN_MESSAGE);
         if (schema != null && tabla != null && !schema.trim().isEmpty() && !tabla.trim().isEmpty()) {
+            final String schemaFinal = schema.trim().toUpperCase();
+            final String tablaFinal = tabla.trim().toUpperCase();
             SwingUtilities.invokeLater(() -> {
-                String ruta = br.realizarBackupPorTabla(schema.trim().toUpperCase(), tabla.trim().toUpperCase());
+                String ruta = br.realizarBackupPorTabla(schemaFinal, tablaFinal);
                 if (ruta != null) {
                     JOptionPane.showMessageDialog(this, "✅ Backup de tabla creado:\n" + ruta, "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -170,14 +241,15 @@ public class VentanaBackupRestore extends JFrame {
             if (schemaOtabla == null || schemaOtabla.trim().isEmpty()) return;
         }
 
-        String dump = JOptionPane.showInputDialog(this, "Ingrese nombre del archivo .dmp (ej: backup_full_2025-11-01_15-30.dmp):", "RESTORE", JOptionPane.PLAIN_MESSAGE);
+        String dump = JOptionPane.showInputDialog(this, "Ingrese nombre del archivo .dmp:", "RESTORE", JOptionPane.PLAIN_MESSAGE);
         if (dump == null || dump.trim().isEmpty()) return;
 
-        String dumpTrim = dump.trim();
-        String schemaTrim = (schemaOtabla != null) ? schemaOtabla.trim() : null;
+        final String tipoFinal = tipo;
+        final String schemaFinal = (schemaOtabla != null) ? schemaOtabla.trim() : null;
+        final String dumpFinal = dump.trim();
 
         SwingUtilities.invokeLater(() -> {
-            boolean ok = br.restaurarBackup(tipo, schemaTrim, dumpTrim);
+            boolean ok = br.restaurarBackup(tipoFinal, schemaFinal, dumpFinal);
             if (ok) {
                 JOptionPane.showMessageDialog(this, "✅ Restauración ejecutada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -194,7 +266,7 @@ public class VentanaBackupRestore extends JFrame {
         }
     }
 
-    // === FONDO ANIMADO COHERENTE CON TODO EL SISTEMA ===
+    // === FONDO ANIMADO ===
     private static class FondoAnimado extends JPanel {
         private final List<Nodo> nodos = new ArrayList<>();
         private final Random rand = new Random();
@@ -256,4 +328,3 @@ public class VentanaBackupRestore extends JFrame {
         SwingUtilities.invokeLater(VentanaBackupRestore::new);
     }
 }
-

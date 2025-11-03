@@ -11,7 +11,7 @@ import java.util.Random;
 public class VentanaSeguridad extends JFrame {
 
     public VentanaSeguridad() {
-        setTitle("Módulo de Seguridad - Oracle XE");
+        setTitle("🔐 Módulo de Seguridad - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -27,30 +27,30 @@ public class VentanaSeguridad extends JFrame {
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === PANEL CENTRAL ===
-        JPanel panelBotones = new JPanel(new GridLayout(5, 2, 25, 25));
-        panelBotones.setOpaque(false);
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(60, 220, 60, 220));
+        // === PANEL CENTRAL CON TARJETAS ===
+        JPanel panelTarjetas = new JPanel(new GridLayout(2, 5, 30, 30));
+        panelTarjetas.setOpaque(false);
+        panelTarjetas.setBorder(BorderFactory.createEmptyBorder(50, 120, 60, 120));
 
-        // === BOTONES DE FUNCIONALIDAD ===
-        panelBotones.add(crearBoton("Crear Usuario", e -> abrir(VentanaCrearUsuario.class)));
-        panelBotones.add(crearBoton("Borrar Usuario", e -> abrir(VentanaBorrarUsuario.class)));
-        panelBotones.add(crearBoton("Crear Rol", e -> abrir(VentanaCrearRol.class)));
-        panelBotones.add(crearBoton("Eliminar Rol", e -> abrir(VentanaEliminarRol.class)));
-        panelBotones.add(crearBoton("Asignar Rol", e -> abrir(VentanaAsignarRol.class)));
-        panelBotones.add(crearBoton("Revocar Rol", e -> abrir(VentanaRevocarRol.class)));
-        panelBotones.add(crearBoton("Privilegio a Usuario", e -> abrir(VentanaPrivilegioUsuario.class)));
-        panelBotones.add(crearBoton("Privilegio a Rol", e -> abrir(VentanaPrivilegioRol.class)));
-        panelBotones.add(crearBoton("Revocar Privilegio", e -> abrir(VentanaRevocarPrivilegio.class)));
-        panelBotones.add(crearBoton("Asignar Tablespace", e -> abrir(VentanaAsignarTablespace.class)));
+        // === TARJETAS DE FUNCIONALIDADES ===
+        panelTarjetas.add(crearTarjeta("👤", "Crear Usuario", "Registrar un nuevo usuario en la base de datos.", e -> abrir(VentanaCrearUsuario.class)));
+        panelTarjetas.add(crearTarjeta("🗑", "Borrar Usuario", "Eliminar un usuario existente del sistema.", e -> abrir(VentanaBorrarUsuario.class)));
+        panelTarjetas.add(crearTarjeta("🧩", "Crear Rol", "Definir un nuevo rol para control de acceso.", e -> abrir(VentanaCrearRol.class)));
+        panelTarjetas.add(crearTarjeta("🚫", "Eliminar Rol", "Eliminar un rol existente del sistema.", e -> abrir(VentanaEliminarRol.class)));
+        panelTarjetas.add(crearTarjeta("📎", "Asignar Rol", "Asignar roles a usuarios específicos.", e -> abrir(VentanaAsignarRol.class)));
+        panelTarjetas.add(crearTarjeta("🔓", "Revocar Rol", "Quitar roles asignados a un usuario.", e -> abrir(VentanaRevocarRol.class)));
+        panelTarjetas.add(crearTarjeta("🔑", "Privilegio a Usuario", "Otorgar privilegios individuales a usuarios.", e -> abrir(VentanaPrivilegioUsuario.class)));
+        panelTarjetas.add(crearTarjeta("🛡", "Privilegio a Rol", "Asignar privilegios a roles específicos.", e -> abrir(VentanaPrivilegioRol.class)));
+        panelTarjetas.add(crearTarjeta("❌", "Revocar Privilegio", "Quitar privilegios a usuarios o roles.", e -> abrir(VentanaRevocarPrivilegio.class)));
+        panelTarjetas.add(crearTarjeta("💾", "Asignar Tablespace", "Asociar tablespaces a usuarios.", e -> abrir(VentanaAsignarTablespace.class)));
 
-        fondo.add(panelBotones, BorderLayout.CENTER);
+        fondo.add(panelTarjetas, BorderLayout.CENTER);
 
-        // === BOTÓN VOLVER ===
+        // === PIE DE PÁGINA (BOTÓN VOLVER) ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 25));
         pie.setOpaque(false);
 
-        JButton btnRegresar = crearBotonInferior("Volver al Menú Principal", new Color(190, 50, 50));
+        JButton btnRegresar = crearBotonInferior("⏪ Volver al Menú Principal", new Color(190, 50, 50));
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaPrincipal().setVisible(true);
@@ -62,40 +62,83 @@ public class VentanaSeguridad extends JFrame {
         setVisible(true);
     }
 
-    // === BOTÓN MODERNO ===
-    private JButton crearBoton(String texto, ActionListener action) {
-        JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
-        boton.setForeground(Color.WHITE);
-        boton.setBackground(new Color(0, 140, 255));
-        boton.setFocusPainted(false);
-        boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(220, 55));
-        boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-
-        boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+    // === TARJETA MODERNA (como la pantalla principal) ===
+    private JPanel crearTarjeta(String icono, String titulo, String descripcion, ActionListener action) {
+        JPanel card = new JPanel(new BorderLayout(10, 10)) {
             @Override
-            public void paint(Graphics g, JComponent c) {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(boton.getBackground());
-                g2.fillRoundRect(0, 0, boton.getWidth(), boton.getHeight(), 25, 25);
-                super.paint(g, c);
+                g2.setColor(new Color(25, 30, 45, 220));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+            }
+        };
+        card.setOpaque(false);
+        card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JLabel lblIcono = new JLabel(icono, JLabel.CENTER);
+        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
+        lblIcono.setForeground(new Color(0, 220, 255));
+
+        JLabel lblTitulo = new JLabel(titulo, JLabel.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        lblTitulo.setForeground(new Color(0, 220, 255));
+
+        JTextArea lblDesc = new JTextArea(descripcion);
+        lblDesc.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblDesc.setForeground(new Color(200, 210, 230));
+        lblDesc.setOpaque(false);
+        lblDesc.setEditable(false);
+        lblDesc.setWrapStyleWord(true);
+        lblDesc.setLineWrap(true);
+        lblDesc.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+
+        JButton btnAbrir = new JButton("Abrir");
+        btnAbrir.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnAbrir.setForeground(Color.WHITE);
+        btnAbrir.setBackground(new Color(0, 120, 255));
+        btnAbrir.setFocusPainted(false);
+        btnAbrir.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btnAbrir.addActionListener(action);
+
+        // Efecto hover
+        btnAbrir.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                btnAbrir.setBackground(new Color(0, 180, 255));
+            }
+            public void mouseExited(MouseEvent e) {
+                btnAbrir.setBackground(new Color(0, 120, 255));
             }
         });
 
-        boton.addMouseListener(new MouseAdapter() {
+        card.add(lblIcono, BorderLayout.NORTH);
+        card.add(lblTitulo, BorderLayout.CENTER);
+        card.add(lblDesc, BorderLayout.SOUTH);
+
+        JPanel panelBoton = new JPanel();
+        panelBoton.setOpaque(false);
+        panelBoton.add(btnAbrir);
+        card.add(panelBoton, BorderLayout.PAGE_END);
+
+        // Hover de tarjeta
+        card.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                boton.setBackground(new Color(0, 180, 255));
+                card.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(0, 240, 255), 2, true),
+                        BorderFactory.createEmptyBorder(18, 18, 18, 18)
+                ));
+                lblIcono.setForeground(new Color(0, 255, 255));
             }
 
             public void mouseExited(MouseEvent e) {
-                boton.setBackground(new Color(0, 140, 255));
+                card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                lblIcono.setForeground(new Color(0, 220, 255));
             }
         });
 
-        return boton;
+        return card;
     }
 
     // === BOTÓN INFERIOR UNIFICADO ===
@@ -145,7 +188,7 @@ public class VentanaSeguridad extends JFrame {
         });
     }
 
-    // === FONDO ANIMADO ===
+    // === FONDO ANIMADO COHERENTE ===
     private static class FondoAnimado extends JPanel {
         private final List<Nodo> nodos = new ArrayList<>();
         private final Random rand = new Random();
@@ -191,14 +234,11 @@ public class VentanaSeguridad extends JFrame {
 
         private static class Nodo {
             double x, y, vx, vy;
-
             Nodo(double x, double y, double vel) {
-                this.x = x;
-                this.y = y;
+                this.x = x; this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
             }
-
             double dist(Nodo o) {
                 double dx = x - o.x, dy = y - o.y;
                 return Math.sqrt(dx * dx + dy * dy);

@@ -71,7 +71,7 @@ public class VentanaPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, """
                     📊 Proyecto Final - Administración y Auditoría de BD Oracle 21c XE
                     Ingeniería en Sistemas - Universidad Nacional (UNA)
-                    Desarrollado por: Equipo GradEm-SIUA
+                    Desarrollado por: Jairo, Josthyn, Gerald y Froylan
                     Curso: Administración de Bases de Datos
                     Profesor: MAP. Rodolfo Sánchez Sánchez
                     """, "Información del Proyecto", JOptionPane.INFORMATION_MESSAGE);
