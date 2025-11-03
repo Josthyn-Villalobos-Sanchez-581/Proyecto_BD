@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Random;
 import modulos.Performance;
 import ui.VentanaPrincipal;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public class PerformanceBDView extends JFrame {
     private final Performance performance;
-    private final JTextArea txtResultados;
+    private final JTextPane txtResultados; // 🔹 Cambiado a JTextPane para permitir centrado y formato
 
     public PerformanceBDView() {
         setTitle("📈 Performance de la Base de Datos - Oracle XE");
@@ -24,8 +27,8 @@ public class PerformanceBDView extends JFrame {
         setContentPane(fondo);
 
         // === CABECERA ===
-        JLabel titulo = new JLabel("📈 Performance de la Base de Datos Oracle", SwingConstants.CENTER);
-        titulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 28));
+        JLabel titulo = new JLabel("📈 Monitoreo del Rendimiento de la Base de Datos Oracle", SwingConstants.CENTER);
+        titulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         titulo.setForeground(new Color(0, 220, 255));
         titulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(titulo, BorderLayout.NORTH);
@@ -33,18 +36,26 @@ public class PerformanceBDView extends JFrame {
         // === PANEL CENTRAL ===
         JPanel centro = new JPanel(new BorderLayout(20, 20));
         centro.setOpaque(false);
-        centro.setBorder(BorderFactory.createEmptyBorder(30, 120, 40, 120));
+        centro.setBorder(BorderFactory.createEmptyBorder(30, 150, 40, 150));
 
-        txtResultados = new JTextArea();
-        txtResultados.setFont(new Font("Consolas", Font.PLAIN, 14));
-        txtResultados.setForeground(new Color(210, 220, 230));
-        txtResultados.setBackground(new Color(15, 20, 28));
-        txtResultados.setCaretColor(new Color(0, 220, 255));
+        // 🔹 JTextPane (permite centrado y estilos)
+        txtResultados = new JTextPane();
         txtResultados.setEditable(false);
+        txtResultados.setFont(new Font("Consolas", Font.BOLD, 18));
+        txtResultados.setForeground(new Color(230, 240, 255));
+        txtResultados.setBackground(new Color(15, 20, 28));
         txtResultados.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(0, 150, 255), 1, true),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
         ));
+
+        // 🔹 Centrar texto visualmente
+        StyledDocument doc = txtResultados.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        StyleConstants.setFontSize(center, 18);
+        StyleConstants.setForeground(center, new Color(230, 240, 255));
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
         JScrollPane scrollResultados = new JScrollPane(txtResultados);
         scrollResultados.setOpaque(false);
@@ -77,9 +88,9 @@ public class PerformanceBDView extends JFrame {
         // === EVENTOS ===
         btnCargar.addActionListener(e -> {
             if (performance == null) return;
-            txtResultados.setText("⏳ Consultando métricas globales...\n\n");
+            mostrarMensaje("⏳ Consultando métricas globales...\n\n");
             String resultado = performance.mostrarPerformanceBD();
-            txtResultados.setText(resultado + "\n✅ Métricas consultadas correctamente.\n");
+            mostrarMensaje(resultado + "\n\n✅ Métricas consultadas correctamente.\n");
         });
 
         btnVolver.addActionListener(e -> {
@@ -90,10 +101,26 @@ public class PerformanceBDView extends JFrame {
         setVisible(true);
     }
 
-    // === BOTÓN REDONDEADO Y COHERENTE CON EL DASHBOARD ===
+    // === MÉTODO PARA ACTUALIZAR TEXTO CENTRADO ===
+    private void mostrarMensaje(String mensaje) {
+        StyledDocument doc = txtResultados.getStyledDocument();
+        try {
+            doc.remove(0, doc.getLength());
+            SimpleAttributeSet center = new SimpleAttributeSet();
+            StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+            StyleConstants.setFontSize(center, 18);
+            StyleConstants.setForeground(center, new Color(230, 240, 255));
+            doc.setParagraphAttributes(0, doc.getLength(), center, false);
+            doc.insertString(doc.getLength(), mensaje, center);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // === BOTÓN REDONDEADO ===
     private JButton crearBoton(String texto, Color color) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 15));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
         boton.setForeground(Color.WHITE);
         boton.setBackground(color);
         boton.setFocusPainted(false);
@@ -101,7 +128,7 @@ public class PerformanceBDView extends JFrame {
         boton.setPreferredSize(new Dimension(230, 45));
         boton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        // Bordes redondeados y hover suave
+        // Redondeado moderno
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -117,6 +144,7 @@ public class PerformanceBDView extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(color.brighter());
             }
+
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(color);
             }
@@ -125,7 +153,7 @@ public class PerformanceBDView extends JFrame {
         return boton;
     }
 
-    // === FONDO ANIMADO (IGUAL AL DE VENTANA PRINCIPAL) ===
+    // === FONDO ANIMADO ===
     private static class FondoAnimado extends JPanel {
         private final List<Nodo> nodos = new ArrayList<>();
         private final Random rand = new Random();

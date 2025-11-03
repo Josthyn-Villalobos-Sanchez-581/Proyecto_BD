@@ -21,7 +21,7 @@ public class VentanaAsignarTablespace extends JFrame {
     private JPanel selectedCard = null;
 
     public VentanaAsignarTablespace() {
-        setTitle("Asignar Tablespace - Oracle XE");
+        setTitle("Asignar Tablespace a Usuario - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -29,30 +29,51 @@ public class VentanaAsignarTablespace extends JFrame {
         fondo.setLayout(new BorderLayout());
         setContentPane(fondo);
 
-        // === Título ===
+        // === ENCABEZADO ===
         JLabel lblTitulo = new JLabel("Asignar Tablespace a Usuario", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 10, 10));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === Panel central ===
+        // === PANEL CENTRAL ===
         JPanel panelCentral = new JPanel(new BorderLayout());
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 120, 20, 120));
 
-        // Campos del usuario
-        JPanel formPanel = new JPanel(new GridLayout(1, 2, 20, 20));
+        // === FORMULARIO DE USUARIO ===
+        JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setOpaque(false);
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 300, 20, 300));
+        fondo.add(panelCentral, BorderLayout.CENTER);
 
-        formPanel.add(crearLabel("Usuario:"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        JPanel cardForm = new JPanel(new GridBagLayout());
+        cardForm.setOpaque(true);
+        cardForm.setBackground(new Color(255, 255, 255, 30));
+        cardForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255, 120), 1, true),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+
+        GridBagConstraints inner = new GridBagConstraints();
+        inner.insets = new Insets(12, 12, 12, 12);
+        inner.fill = GridBagConstraints.HORIZONTAL;
+        inner.gridx = 0;
+        inner.gridy = 0;
+
+        JLabel lblUsuario = crearLabel("Usuario:");
+        cardForm.add(lblUsuario, inner);
+        inner.gridx = 1;
         txtUsuario = crearCampoTexto();
-        formPanel.add(txtUsuario);
+        cardForm.add(txtUsuario, inner);
 
+        formPanel.add(cardForm, gbc);
         panelCentral.add(formPanel, BorderLayout.NORTH);
 
-        // === Sección de cards de tablespaces ===
+        // === SECCIÓN DE TABLESPACES ===
         JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 25));
         cardsPanel.setOpaque(false);
 
@@ -78,12 +99,13 @@ public class VentanaAsignarTablespace extends JFrame {
 
         fondo.add(panelCentral, BorderLayout.CENTER);
 
-        // === Pie de botones ===
+        // === PIE DE BOTONES ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
         JButton btnAsignar = crearBoton("Asignar Tablespace", e -> asignar());
         JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
+
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaSeguridad().setVisible(true);
@@ -96,10 +118,10 @@ public class VentanaAsignarTablespace extends JFrame {
         setVisible(true);
     }
 
-    // === Crear una tarjeta visual para un tablespace ===
+    // === CREAR UNA CARD VISUAL PARA UN TABLESPACE ===
     private JPanel crearCard(String info) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setPreferredSize(new Dimension(280, 120));
+        card.setPreferredSize(new Dimension(300, 130));
         card.setBackground(new Color(15, 25, 45));
         card.setBorder(BorderFactory.createLineBorder(new Color(0, 150, 255), 2, true));
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -107,12 +129,15 @@ public class VentanaAsignarTablespace extends JFrame {
         JLabel lblInfo = new JLabel("<html><center>" + info.replace(" | ", "<br>") + "</center></html>", JLabel.CENTER);
         lblInfo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblInfo.setForeground(Color.WHITE);
+        lblInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         card.add(lblInfo, BorderLayout.CENTER);
 
-        // Efecto hover y selección
+        // Efectos visuales
         card.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                card.setBackground(new Color(25, 35, 65));
+                if (!card.equals(selectedCard)) {
+                    card.setBackground(new Color(25, 35, 65));
+                }
             }
 
             public void mouseExited(MouseEvent e) {
@@ -144,6 +169,7 @@ public class VentanaAsignarTablespace extends JFrame {
         card.putClientProperty("temporal", esTemporal);
     }
 
+    // === ACCIÓN PRINCIPAL ===
     private void asignar() {
         String usuario = txtUsuario.getText().trim();
 
@@ -157,10 +183,8 @@ public class VentanaAsignarTablespace extends JFrame {
             return;
         }
 
-        // ✅ Determinar automáticamente si el tablespace es TEMPORARY o DEFAULT
         boolean temporal = (boolean) selectedCard.getClientProperty("temporal");
 
-        // ✅ Nueva implementación con OperacionResultado
         try {
             OperacionResultado res = seguridad.asignarTablespaceAUsuario(usuario, selectedTablespace, temporal);
 
@@ -177,29 +201,36 @@ public class VentanaAsignarTablespace extends JFrame {
         }
     }
 
-    // === Componentes comunes ===
+    // === COMPONENTES VISUALES REUTILIZABLES ===
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto, JLabel.RIGHT);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        campo.setPreferredSize(new Dimension(240, 32));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        campo.setBackground(new Color(240, 245, 250));
+        campo.setForeground(Color.BLACK);
         return campo;
     }
 
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(250, 55));
+        boton.setPreferredSize(new Dimension(230, 50));
         boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
@@ -232,7 +263,7 @@ public class VentanaAsignarTablespace extends JFrame {
         boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(220, 50));
+        boton.setPreferredSize(new Dimension(230, 50));
 
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
@@ -257,7 +288,7 @@ public class VentanaAsignarTablespace extends JFrame {
         return boton;
     }
 
-    // === Fondo animado ===
+    // === FONDO ANIMADO ===
     private static class FondoAnimado extends JPanel {
         private final List<Nodo> nodos = new ArrayList<>();
         private final Random rand = new Random();
@@ -305,7 +336,8 @@ public class VentanaAsignarTablespace extends JFrame {
         private static class Nodo {
             double x, y, vx, vy;
             Nodo(double x, double y, double vel) {
-                this.x = x; this.y = y;
+                this.x = x;
+                this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
             }
@@ -314,5 +346,9 @@ public class VentanaAsignarTablespace extends JFrame {
                 return Math.sqrt(dx * dx + dy * dy);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(VentanaAsignarTablespace::new);
     }
 }
