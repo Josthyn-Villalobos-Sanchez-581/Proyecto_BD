@@ -239,10 +239,25 @@ public class VentanaRevocarPrivilegio extends JFrame {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Fondo con gradiente azul oscuro
             GradientPaint grad = new GradientPaint(0, 0, new Color(5, 10, 25),
                     getWidth(), getHeight(), new Color(0, 40, 70));
             g2.setPaint(grad);
             g2.fillRect(0, 0, getWidth(), getHeight());
+
+            // === Líneas entre nodos cercanos ===
+            g2.setColor(new Color(0, 120, 255, 40));
+            for (Nodo n1 : nodos)
+                for (Nodo n2 : nodos)
+                    if (n1.dist(n2) < 150)
+                        g2.drawLine((int) n1.x, (int) n1.y, (int) n2.x, (int) n2.y);
+
+            // === Nodos (puntos) ===
+            for (Nodo n : nodos) {
+                g2.setColor(new Color(0, 200, 255, 150));
+                g2.fillOval((int) n.x, (int) n.y, 6, 6);
+            }
         }
 
         private static class Nodo {
@@ -251,6 +266,10 @@ public class VentanaRevocarPrivilegio extends JFrame {
                 this.x = x; this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
+            }
+            double dist(Nodo o) {
+                double dx = x - o.x, dy = y - o.y;
+                return Math.sqrt(dx * dx + dy * dy);
             }
         }
     }
