@@ -19,6 +19,24 @@ public class Tablespaces {
         return ejecutarComando(sql, "Tablespace '" + nombre + "' creado correctamente.");
     }
 
+    public boolean crearTemporaryTablespace(String nombre, String rutaDatafile, int tamanoMB) {
+        String sql = "CREATE TEMPORARY TABLESPACE " + nombre +
+                " TEMPFILE '" + rutaDatafile + "' SIZE " + tamanoMB + "M "
+                + "AUTOEXTEND ON NEXT 5M MAXSIZE UNLIMITED";
+
+        try (Connection conn = ConexionBD.conectar();
+             Statement st = conn.createStatement()) {
+
+            st.execute(sql);
+            System.out.println("✅ Temporary Tablespace '" + nombre + "' creado correctamente.");
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al crear temp tablespace: " + e.getMessage());
+            return false;
+        }
+    }
+
     // Agregar un datafile a un tablespace existente
     public boolean agregarDatafile(String tablespace, String datafilePath, int sizeMB) {
         String sql = "ALTER TABLESPACE " + tablespace +
