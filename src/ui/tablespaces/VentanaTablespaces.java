@@ -31,12 +31,6 @@ public class VentanaTablespaces extends JFrame {
             SwingUtilities.invokeLater(() -> new VentanaCrearTablespace().setVisible(true));
         });
 
-        JButton btnCrearTemp = crearBoton("Crear Temporary TS");
-        btnCrearTemp.addActionListener(e -> {
-            dispose();
-            new VentanaCrearTemporaryTablespace().setVisible(true);
-        });
-
         JButton btnAgregarDF = crearBoton("Agregar Datafile");
         btnAgregarDF.addActionListener(e -> {
             dispose();
