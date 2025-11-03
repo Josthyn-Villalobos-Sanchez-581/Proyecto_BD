@@ -97,8 +97,8 @@ public class TunningView extends JFrame {
                 return;
             }
             txtResultados.setText("⏳ Analizando consulta...\n");
-            performance.analizarConsulta(sql);
-            txtResultados.append("\n✅ Consulta analizada correctamente. Verifique consola o logs.\n");
+            String resultado = performance.analizarConsulta(sql);
+            txtResultados.setText(resultado + "\n✅ Consulta analizada correctamente.\n");
         });
 
         btnIndice.addActionListener(e -> {

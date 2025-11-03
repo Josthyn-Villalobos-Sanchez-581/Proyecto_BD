@@ -19,28 +19,38 @@ public class Performance {
     // ============================================================
 
     /** Analiza el plan de ejecución de una sentencia SQL */
-    public void analizarConsulta(String sql) {
+    public String analizarConsulta(String sql) {
+        StringBuilder sb = new StringBuilder();
+
         try (Statement stmt = conn.createStatement()) {
+            // Limpiar plan anterior
             stmt.executeUpdate("DELETE FROM plan_table");
+
+            // Generar plan de ejecución
             stmt.executeUpdate("EXPLAIN PLAN FOR " + sql);
 
+            // Obtener resultados
             ResultSet rs = stmt.executeQuery(
                     "SELECT LPAD(' ', LEVEL-1) || OPERATION || ' (' || OPTIONS || ')' AS OPERACION, " +
                             "OBJECT_NAME AS OBJETO FROM plan_table " +
                             "START WITH ID = 0 CONNECT BY PRIOR ID = PARENT_ID"
             );
 
-            System.out.println("\n🔍 PLAN DE EJECUCIÓN:");
+            sb.append("🔍 PLAN DE EJECUCIÓN:\n--------------------------------\n");
             while (rs.next()) {
-                System.out.println(rs.getString("OPERACION") + " → " + rs.getString("OBJETO"));
+                String operacion = rs.getString("OPERACION");
+                String objeto = rs.getString("OBJETO");
+                sb.append(operacion).append(" → ").append(objeto == null ? "N/A" : objeto).append("\n");
             }
 
-            registrarLog("Analizado plan de ejecución para: " + sql);
-
+            registrarLog("EXPLAIN PLAN ejecutado para: " + sql);
         } catch (SQLException e) {
-            System.err.println("⚠️ Error al analizar consulta: " + e.getMessage());
+            sb.append("⚠️ Error al analizar la consulta: ").append(e.getMessage()).append("\n");
         }
+
+        return sb.toString();
     }
+
 
     /** Crea un índice sobre una tabla y columna */
     public void crearIndice(String tabla, String columna) {
