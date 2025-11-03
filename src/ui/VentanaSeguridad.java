@@ -39,9 +39,10 @@ public class VentanaSeguridad extends JFrame {
         panelTarjetas.add(crearTarjeta("🚫", "Eliminar Rol", "Eliminar un rol existente del sistema.", e -> abrir(VentanaEliminarRol.class)));
         panelTarjetas.add(crearTarjeta("📎", "Asignar Rol", "Asignar roles a usuarios específicos.", e -> abrir(VentanaAsignarRol.class)));
         panelTarjetas.add(crearTarjeta("🔓", "Revocar Rol", "Quitar roles asignados a un usuario.", e -> abrir(VentanaRevocarRol.class)));
-        panelTarjetas.add(crearTarjeta("🔑", "Privilegio a Usuario", "Otorgar privilegios individuales a usuarios.", e -> abrir(VentanaPrivilegioUsuario.class)));
-        panelTarjetas.add(crearTarjeta("🛡", "Privilegio a Rol", "Asignar privilegios a roles específicos.", e -> abrir(VentanaPrivilegioRol.class)));
-        panelTarjetas.add(crearTarjeta("❌", "Revocar Privilegio", "Quitar privilegios a usuarios o roles.", e -> abrir(VentanaRevocarPrivilegio.class)));
+        panelTarjetas.add(crearTarjeta("🔑", "Dar Privilegio a Usuario", "Otorgar privilegios individuales a usuarios.", e -> abrir(VentanaPrivilegioUsuario.class)));
+        panelTarjetas.add(crearTarjeta("🛡", "Dar Privilegio a Rol", "Asignar privilegios a roles específicos.", e -> abrir(VentanaPrivilegioRol.class)));
+        panelTarjetas.add(crearTarjeta("❌", "Revocar Privilegio a Usuario", "Quitar privilegios a usuarios.", e -> abrir(VentanaRevocarPrivilegio.class)));
+        panelTarjetas.add(crearTarjeta("❌", "Revocar Privilegio a Rol", "Quitar privilegios a roles.", e -> abrir(VentanaRevocarPrivilegioRol.class)));
         panelTarjetas.add(crearTarjeta("💾", "Asignar Tablespace", "Asociar tablespaces a usuarios.", e -> abrir(VentanaAsignarTablespace.class)));
 
         fondo.add(panelTarjetas, BorderLayout.CENTER);
@@ -50,7 +51,7 @@ public class VentanaSeguridad extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 25));
         pie.setOpaque(false);
 
-        JButton btnRegresar = crearBotonInferior("⏪ Volver al Menú Principal", new Color(190, 50, 50));
+        JButton btnRegresar = crearBotonInferior(" Volver al Menú Principal", new Color(190, 50, 50));
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaPrincipal().setVisible(true);

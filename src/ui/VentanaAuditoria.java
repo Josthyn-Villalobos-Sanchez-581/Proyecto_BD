@@ -27,7 +27,7 @@ public class VentanaAuditoria extends JFrame {
         setContentPane(fondo);
 
         // === Encabezado ===
-        JLabel lblTitulo = new JLabel("📋 Registros de Auditoría del Sistema", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel("Registros de Auditoría del Sistema", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
@@ -61,8 +61,8 @@ public class VentanaAuditoria extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnRefrescar = crearBoton("🔄 Refrescar", e -> cargarRegistros());
-        JButton btnRegresar = crearBotonInferior("⬅️ Volver al Menú", new Color(190, 50, 50));
+        JButton btnRefrescar = crearBoton("Refrescar", e -> cargarRegistros());
+        JButton btnRegresar = crearBotonInferior("Volver al Menú", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();

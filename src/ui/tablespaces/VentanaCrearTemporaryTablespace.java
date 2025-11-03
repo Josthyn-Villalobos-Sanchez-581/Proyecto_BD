@@ -13,7 +13,7 @@ public class VentanaCrearTemporaryTablespace extends JFrame {
     private final Tablespaces ts = new Tablespaces();
 
     public VentanaCrearTemporaryTablespace() {
-        setTitle("🧩 Crear Temporary Tablespace - Oracle XE");
+        setTitle("Crear Temporary Tablespace - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -81,8 +81,8 @@ public class VentanaCrearTemporaryTablespace extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnCrear = crearBoton("🧱 Crear TEMP Tablespace", e -> crearTemporaryTablespace());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnCrear = crearBoton("Crear TEMP Tablespace", e -> crearTemporaryTablespace());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();

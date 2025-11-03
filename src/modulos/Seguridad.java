@@ -172,22 +172,44 @@ public class Seguridad {
         }
     }
 
-    public OperacionResultado asignarPrivilegioARol(String rol, String privilegio, String tabla) {
-        try (Connection conn = ConexionBD.conectar()) {
+    public OperacionResultado asignarPrivilegiosDeSchemaARol(String rol, String schema, List<String> privilegiosSeleccionados) {
+        try (Connection conn = ConexionBD.conectar();
+             Statement st = conn.createStatement()) {
+
+            // Validar existencia del rol
             if (!existeRol(conn, rol)) {
                 return new OperacionResultado(false, "El rol '" + rol + "' no existe.");
             }
 
-            String sql = "GRANT " + privilegio + " ON " + tabla + " TO " + rol;
-            try (Statement st = conn.createStatement()) {
-                st.execute(sql);
-                return new OperacionResultado(true, "Privilegio '" + privilegio + "' asignado al rol '" + rol + "'.");
+            // Validar que haya privilegios
+            if (privilegiosSeleccionados == null || privilegiosSeleccionados.isEmpty()) {
+                return new OperacionResultado(false, "No se seleccionaron privilegios para asignar.");
             }
 
+            // Si hay un schema seleccionado, lo mostramos como referencia (no afecta el GRANT)
+            String schemaMsg = (schema != null && !schema.isEmpty())
+                    ? " sobre el schema '" + schema + "'"
+                    : "";
+
+            // Otorgar todos los privilegios seleccionados
+            for (String privilegio : privilegiosSeleccionados) {
+                try {
+                    String sql = "GRANT " + privilegio + " TO " + rol;
+                    st.execute(sql);
+                    System.out.println("✅ Privilegio otorgado: " + privilegio + " al rol " + rol + schemaMsg);
+                } catch (SQLException e) {
+                    System.out.println("⚠ Error al otorgar privilegio " + privilegio + ": " + e.getMessage());
+                }
+            }
+
+            return new OperacionResultado(true,
+                    "Privilegios asignados correctamente al rol '" + rol + "'" + schemaMsg + ".");
+
         } catch (SQLException e) {
-            return new OperacionResultado(false, "Error al asignar privilegio a rol: " + e.getMessage());
+            return new OperacionResultado(false, "Error al asignar privilegios al rol: " + e.getMessage());
         }
     }
+
 
     public OperacionResultado asignarPrivilegiosDeSchema(String usuario, List<String> privilegiosSeleccionados) {
         try (Connection conn = ConexionBD.conectar();
@@ -220,39 +242,136 @@ public class Seguridad {
 
 
 
-    public OperacionResultado revocarPrivilegioTabla(String usuario, String tabla, String privilegio) {
-        try (Connection conn = ConexionBD.conectar()) {
+    public OperacionResultado revocarPrivilegiosDeSchema(String usuario, String schema, List<String> privilegiosSeleccionados) {
+        List<String> revocados = new ArrayList<>();
+        List<String> noAsignados = new ArrayList<>();
+
+        try (Connection conn = ConexionBD.conectar();
+             Statement st = conn.createStatement()) {
+
             if (!existeUsuario(conn, usuario)) {
                 return new OperacionResultado(false, "El usuario '" + usuario + "' no existe.");
             }
 
-            String sql = "REVOKE " + privilegio + " ON " + tabla + " FROM " + usuario;
-            try (Statement st = conn.createStatement()) {
-                st.execute(sql);
-                return new OperacionResultado(true, "Privilegio '" + privilegio + "' revocado de '" + usuario + "'.");
+            if (privilegiosSeleccionados == null || privilegiosSeleccionados.isEmpty()) {
+                return new OperacionResultado(false, "No se seleccionaron privilegios para revocar.");
             }
 
+            String schemaMsg = (schema != null && !schema.isEmpty())
+                    ? " sobre el schema '" + schema + "'"
+                    : "";
+
+            for (String privilegio : privilegiosSeleccionados) {
+                try {
+                    st.execute("REVOKE " + privilegio + " FROM " + usuario);
+                    revocados.add(privilegio);
+                    System.out.println("✅ Privilegio revocado: " + privilegio + " del usuario " + usuario + schemaMsg);
+                } catch (SQLException e) {
+                    // ORA-01927 → Privilege not granted
+                    if (e.getMessage().contains("ORA-01927")) {
+                        System.out.println("ℹ El privilegio " + privilegio + " no estaba asignado al usuario " + usuario);
+                        noAsignados.add(privilegio);
+                    } else {
+                        System.out.println("⚠ Error al revocar " + privilegio + ": " + e.getMessage());
+                    }
+                }
+            }
+
+            // Construir mensaje final
+            StringBuilder mensaje = new StringBuilder("Resultado de la revocación de privilegios para '")
+                    .append(usuario).append("'").append(schemaMsg).append(":\n\n");
+
+            if (!revocados.isEmpty()) {
+                mensaje.append("✅ Revocados correctamente:\n  - ")
+                        .append(String.join("\n  - ", revocados))
+                        .append("\n\n");
+            }
+
+            if (!noAsignados.isEmpty()) {
+                mensaje.append("ℹ No estaban asignados:\n  - ")
+                        .append(String.join("\n  - ", noAsignados))
+                        .append("\n");
+            }
+
+            if (revocados.isEmpty() && noAsignados.isEmpty()) {
+                mensaje.append("⚠ No se pudo revocar ningún privilegio.");
+            }
+
+            return new OperacionResultado(true, mensaje.toString());
+
         } catch (SQLException e) {
-            return new OperacionResultado(false, "Error al revocar privilegio: " + e.getMessage());
+            return new OperacionResultado(false, "Error al revocar privilegios: " + e.getMessage());
         }
     }
 
-    public OperacionResultado revocarPrivilegioDeRol(String rol, String tabla, String privilegio) {
-        try (Connection conn = ConexionBD.conectar()) {
+
+
+    public OperacionResultado revocarPrivilegiosDeSchemaARol(String rol, String schema, List<String> privilegiosSeleccionados) {
+        List<String> revocados = new ArrayList<>();
+        List<String> noAsignados = new ArrayList<>();
+
+        try (Connection conn = ConexionBD.conectar();
+             Statement st = conn.createStatement()) {
+
+            // Validar que el rol exista
             if (!existeRol(conn, rol)) {
                 return new OperacionResultado(false, "El rol '" + rol + "' no existe.");
             }
 
-            String sql = "REVOKE " + privilegio + " ON " + tabla + " FROM " + rol;
-            try (Statement st = conn.createStatement()) {
-                st.execute(sql);
-                return new OperacionResultado(true, "Privilegio '" + privilegio + "' revocado del rol '" + rol + "'.");
+            if (privilegiosSeleccionados == null || privilegiosSeleccionados.isEmpty()) {
+                return new OperacionResultado(false, "No se seleccionaron privilegios para revocar.");
             }
 
+            String schemaMsg = (schema != null && !schema.isEmpty())
+                    ? " sobre el schema '" + schema + "'"
+                    : "";
+
+            for (String privilegio : privilegiosSeleccionados) {
+                try {
+                    // Ejecutar la revocación
+                    String sql = "REVOKE " + privilegio + " FROM " + rol;
+                    st.execute(sql);
+                    revocados.add(privilegio);
+                    System.out.println("✅ Privilegio revocado: " + privilegio + " del rol " + rol + schemaMsg);
+
+                } catch (SQLException e) {
+                    // Detectar si el privilegio no estaba asignado
+                    if (e.getMessage().contains("ORA-01952") || e.getMessage().contains("ORA-01927")) {
+                        System.out.println("ℹ El privilegio " + privilegio + " no estaba asignado al rol " + rol);
+                        noAsignados.add(privilegio);
+                    } else {
+                        System.out.println("⚠ Error al revocar " + privilegio + ": " + e.getMessage());
+                    }
+                }
+            }
+
+            // Crear mensaje final
+            StringBuilder mensaje = new StringBuilder("Resultado de la revocación de privilegios para el rol '")
+                    .append(rol).append("'").append(schemaMsg).append(":\n\n");
+
+            if (!revocados.isEmpty()) {
+                mensaje.append("✅ Revocados correctamente:\n  - ")
+                        .append(String.join("\n  - ", revocados))
+                        .append("\n\n");
+            }
+
+            if (!noAsignados.isEmpty()) {
+                mensaje.append("ℹ No estaban asignados:\n  - ")
+                        .append(String.join("\n  - ", noAsignados))
+                        .append("\n");
+            }
+
+            if (revocados.isEmpty() && noAsignados.isEmpty()) {
+                mensaje.append("⚠ No se pudo revocar ningún privilegio.");
+            }
+
+            return new OperacionResultado(true, mensaje.toString());
+
         } catch (SQLException e) {
-            return new OperacionResultado(false, "Error al revocar privilegio de rol: " + e.getMessage());
+            return new OperacionResultado(false, "Error al revocar privilegios del rol: " + e.getMessage());
         }
     }
+
 
     /* ===========================================================
        🔹 ASIGNAR TABLESPACE A USUARIO (con validaciones)

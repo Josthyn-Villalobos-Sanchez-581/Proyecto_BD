@@ -67,9 +67,9 @@ public class VentanaPrincipal extends JFrame {
         pie.setOpaque(false);
         pie.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
-        JButton btnAcerca = crearBotonInferior("🛈 Acerca del Sistema", new Color(0, 140, 255), e -> {
+        JButton btnAcerca = crearBotonInferior("Acerca del Sistema", new Color(0, 140, 255), e -> {
             JOptionPane.showMessageDialog(this, """
-                    📊 Proyecto Final - Administración y Auditoría de BD Oracle 21c XE
+                    Proyecto Final - Administración y Auditoría de BD Oracle 21c XE
                     Ingeniería en Sistemas - Universidad Nacional (UNA)
                     Desarrollado por: Jairo, Josthyn, Gerald y Froylan
                     Curso: Administración de Bases de Datos
@@ -77,7 +77,7 @@ public class VentanaPrincipal extends JFrame {
                     """, "Información del Proyecto", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        JButton btnSalir = crearBotonInferior("⏻ Salir del Sistema", new Color(190, 50, 50), e -> System.exit(0));
+        JButton btnSalir = crearBotonInferior("Salir del Sistema", new Color(190, 50, 50), e -> System.exit(0));
 
         JPanel botonesPie = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 10));
         botonesPie.setOpaque(false);

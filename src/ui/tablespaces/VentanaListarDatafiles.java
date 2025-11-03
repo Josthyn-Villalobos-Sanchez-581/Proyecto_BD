@@ -13,7 +13,7 @@ public class VentanaListarDatafiles extends JFrame {
     private final JTextArea area;
 
     public VentanaListarDatafiles() {
-        setTitle("📂 Listar Datafiles - Oracle XE");
+        setTitle("Listar Datafiles - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -66,8 +66,8 @@ public class VentanaListarDatafiles extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnActualizar = crearBoton("🔄 Actualizar", e -> cargarDatafiles());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnActualizar = crearBoton("Actualizar", e -> cargarDatafiles());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();

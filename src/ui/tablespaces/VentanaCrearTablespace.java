@@ -13,7 +13,7 @@ public class VentanaCrearTablespace extends JFrame {
     private final Tablespaces ts = new Tablespaces();
 
     public VentanaCrearTablespace() {
-        setTitle("📁 Crear Tablespace - Oracle XE");
+        setTitle("Crear Tablespace - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -80,8 +80,8 @@ public class VentanaCrearTablespace extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnCrear = crearBoton("🧱 Crear Tablespace", e -> crearTablespace());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnCrear = crearBoton("Crear Tablespace", e -> crearTablespace());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();

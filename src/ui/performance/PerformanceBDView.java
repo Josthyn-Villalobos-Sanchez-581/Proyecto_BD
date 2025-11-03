@@ -27,7 +27,7 @@ public class PerformanceBDView extends JFrame {
         setContentPane(fondo);
 
         // === CABECERA ===
-        JLabel titulo = new JLabel("📈 Monitoreo del Rendimiento de la Base de Datos Oracle", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("Monitoreo del Rendimiento de la Base de Datos Oracle", SwingConstants.CENTER);
         titulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         titulo.setForeground(new Color(0, 220, 255));
         titulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
@@ -68,8 +68,8 @@ public class PerformanceBDView extends JFrame {
         JPanel botones = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 25));
         botones.setOpaque(false);
 
-        JButton btnCargar = crearBoton("📊 Ver Métricas", new Color(0, 140, 255));
-        JButton btnVolver = crearBoton("⏪ Volver al Menú", new Color(190, 50, 50));
+        JButton btnCargar = crearBoton("Ver Métricas", new Color(0, 140, 255));
+        JButton btnVolver = crearBoton("Volver al Menú", new Color(190, 50, 50));
 
         botones.add(btnCargar);
         botones.add(btnVolver);

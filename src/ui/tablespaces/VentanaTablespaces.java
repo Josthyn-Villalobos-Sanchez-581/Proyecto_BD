@@ -47,7 +47,7 @@ public class VentanaTablespaces extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 25));
         pie.setOpaque(false);
 
-        JButton btnVolver = crearBotonInferior("⏪ Volver al Menú Principal", new Color(190, 50, 50));
+        JButton btnVolver = crearBotonInferior("Volver al Menú Principal", new Color(190, 50, 50));
         btnVolver.addActionListener(e -> {
             dispose();
             new VentanaPrincipal().setVisible(true);

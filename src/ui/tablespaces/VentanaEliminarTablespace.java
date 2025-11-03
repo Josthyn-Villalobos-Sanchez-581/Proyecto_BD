@@ -13,7 +13,7 @@ public class VentanaEliminarTablespace extends JFrame {
     private final Tablespaces ts = new Tablespaces();
 
     public VentanaEliminarTablespace() {
-        setTitle("🗑️ Eliminar Tablespace - Oracle XE");
+        setTitle("🗑Eliminar Tablespace - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -62,8 +62,8 @@ public class VentanaEliminarTablespace extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnEliminar = crearBoton("🗑️ Eliminar Tablespace", e -> eliminarTablespace());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnEliminar = crearBoton("🗑Eliminar Tablespace", e -> eliminarTablespace());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();

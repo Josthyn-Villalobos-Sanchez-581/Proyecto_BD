@@ -67,10 +67,10 @@ public class TunningView extends JFrame {
         botones.setOpaque(false);
         botones.setBorder(BorderFactory.createEmptyBorder(20, 0, 30, 0));
 
-        JButton btnAnalizar = crearBoton("🔍 Analizar Consulta", new Color(0, 140, 255));
-        JButton btnIndice = crearBoton("⚙️ Crear Índice", new Color(0, 140, 255));
-        JButton btnStats = crearBoton("📊 Actualizar Estadísticas", new Color(0, 140, 255));
-        JButton btnVolver = crearBoton("⏪ Volver al Menú", new Color(190, 50, 50));
+        JButton btnAnalizar = crearBoton("Analizar Consulta", new Color(0, 140, 255));
+        JButton btnIndice = crearBoton("Crear Índice", new Color(0, 140, 255));
+        JButton btnStats = crearBoton("Actualizar Estadísticas", new Color(0, 140, 255));
+        JButton btnVolver = crearBoton("Volver al Menú", new Color(190, 50, 50));
 
         botones.add(btnAnalizar);
         botones.add(btnIndice);

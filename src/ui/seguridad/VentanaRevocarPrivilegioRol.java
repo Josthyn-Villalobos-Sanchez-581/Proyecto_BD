@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class VentanaRevocarPrivilegio extends JFrame {
+public class VentanaRevocarPrivilegioRol extends JFrame {
 
-    private JTextField txtUsuario;
+    private JTextField txtRol;
     private Seguridad seguridad = new Seguridad();
     private Tablespaces tablespaces = new Tablespaces();
     private String selectedSchema = null;
@@ -24,8 +24,8 @@ public class VentanaRevocarPrivilegio extends JFrame {
     private JCheckBox chkSession, chkTable, chkView, chkSequence,
             chkSynonym, chkProcedure, chkTrigger, chkUnlimited;
 
-    public VentanaRevocarPrivilegio() {
-        setTitle("Revocar Privilegios de Usuario - Oracle XE");
+    public VentanaRevocarPrivilegioRol() {
+        setTitle("Revocar Privilegios de Rol - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -34,7 +34,7 @@ public class VentanaRevocarPrivilegio extends JFrame {
         setContentPane(fondo);
 
         // === Encabezado ===
-        JLabel lblTitulo = new JLabel("Revocación de Privilegios de Sistema a un Usuario", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel("Revocación de Privilegios de Sistema a un Rol", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
@@ -45,21 +45,21 @@ public class VentanaRevocarPrivilegio extends JFrame {
         panelCentral.setOpaque(false);
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
 
-        // === Campo Usuario ===
+        // === Campo Rol ===
         JPanel formPanel = new JPanel(new GridLayout(1, 2, 20, 20));
         formPanel.setOpaque(false);
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 250, 20, 250));
 
-        formPanel.add(crearLabel("Usuario:"));
-        txtUsuario = crearCampoTexto();
-        formPanel.add(txtUsuario);
+        formPanel.add(crearLabel("Rol:"));
+        txtRol = crearCampoTexto();
+        formPanel.add(txtRol);
         panelCentral.add(formPanel, BorderLayout.NORTH);
 
         // === Sección de schemas ===
         JPanel schemasPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 25));
         schemasPanel.setOpaque(false);
 
-        List<String> listaSchemas = tablespaces.listarTablespaces(); // se usa igual que el ejemplo
+        List<String> listaSchemas = tablespaces.listarTablespaces(); // reutiliza tu método existente
         if (listaSchemas.isEmpty()) {
             JLabel lblVacio = new JLabel("No hay schemas disponibles.", JLabel.CENTER);
             lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 18));
@@ -111,7 +111,7 @@ public class VentanaRevocarPrivilegio extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnRevocar = crearBoton("Revocar Privilegios", e -> revocarPrivilegios());
+        JButton btnRevocar = crearBoton("Revocar Privilegios", e -> revocarPrivilegiosRol());
         JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
@@ -159,11 +159,11 @@ public class VentanaRevocarPrivilegio extends JFrame {
     }
 
     // === Acción principal ===
-    private void revocarPrivilegios() {
-        String usuario = txtUsuario.getText().trim();
+    private void revocarPrivilegiosRol() {
+        String rol = txtRol.getText().trim();
 
-        if (usuario.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar el nombre del usuario.", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
+        if (rol.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar el nombre del rol.", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -188,7 +188,7 @@ public class VentanaRevocarPrivilegio extends JFrame {
         }
 
         try {
-            OperacionResultado res = seguridad.revocarPrivilegiosDeSchema(usuario, selectedSchema, privilegios);
+            OperacionResultado res = seguridad.revocarPrivilegiosDeSchemaARol(rol, selectedSchema, privilegios);
 
             if (res.isExito()) {
                 JOptionPane.showMessageDialog(this, res.getMensaje(), "Resultado", JOptionPane.INFORMATION_MESSAGE);

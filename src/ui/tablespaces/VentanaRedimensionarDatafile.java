@@ -70,8 +70,8 @@ public class VentanaRedimensionarDatafile extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnRedimensionar = crearBoton("📏 Redimensionar", e -> redimensionar());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnRedimensionar = crearBoton("Redimensionar", e -> redimensionar());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaTablespaces().setVisible(true);

@@ -80,8 +80,8 @@ public class VentanaAgregarDatafile extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
-        JButton btnAgregar = crearBoton("💾 Agregar Datafile", e -> ejecutarAgregarDatafile());
-        JButton btnRegresar = crearBotonInferior("⏪ Volver", new Color(190, 50, 50));
+        JButton btnAgregar = crearBoton("Agregar Datafile", e -> ejecutarAgregarDatafile());
+        JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
 
         btnRegresar.addActionListener(e -> {
             dispose();
