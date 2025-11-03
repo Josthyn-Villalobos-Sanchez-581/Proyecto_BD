@@ -11,7 +11,7 @@ import java.util.Random;
 public class VentanaSeguridad extends JFrame {
 
     public VentanaSeguridad() {
-        setTitle("🔐 Módulo de Seguridad - Oracle XE");
+        setTitle("Módulo de Seguridad - Oracle XE");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -28,19 +28,21 @@ public class VentanaSeguridad extends JFrame {
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
         // === PANEL CENTRAL ===
-        JPanel panelBotones = new JPanel(new GridLayout(4, 2, 25, 25));
+        JPanel panelBotones = new JPanel(new GridLayout(5, 2, 25, 25));
         panelBotones.setOpaque(false);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(60, 220, 60, 220));
 
         // === BOTONES DE FUNCIONALIDAD ===
-        panelBotones.add(crearBoton("👤 Crear Usuario", e -> abrir(VentanaCrearUsuario.class)));
-        panelBotones.add(crearBoton("🗑 Borrar Usuario", e -> abrir(VentanaBorrarUsuario.class)));
-        panelBotones.add(crearBoton("🧩 Crear Rol", e -> abrir(VentanaCrearRol.class)));
-        panelBotones.add(crearBoton("📎 Asignar Rol", e -> abrir(VentanaAsignarRol.class)));
-        panelBotones.add(crearBoton("🚫 Revocar Rol", e -> abrir(VentanaRevocarRol.class)));
-        panelBotones.add(crearBoton("🔑 Privilegio a Usuario", e -> abrir(VentanaPrivilegioUsuario.class)));
-        panelBotones.add(crearBoton("🛡 Privilegio a Rol", e -> abrir(VentanaPrivilegioRol.class)));
-        panelBotones.add(crearBoton("❌ Revocar Privilegio", e -> abrir(VentanaRevocarPrivilegio.class)));
+        panelBotones.add(crearBoton("Crear Usuario", e -> abrir(VentanaCrearUsuario.class)));
+        panelBotones.add(crearBoton("Borrar Usuario", e -> abrir(VentanaBorrarUsuario.class)));
+        panelBotones.add(crearBoton("Crear Rol", e -> abrir(VentanaCrearRol.class)));
+        panelBotones.add(crearBoton("Eliminar Rol", e -> abrir(VentanaEliminarRol.class)));
+        panelBotones.add(crearBoton("Asignar Rol", e -> abrir(VentanaAsignarRol.class)));
+        panelBotones.add(crearBoton("Revocar Rol", e -> abrir(VentanaRevocarRol.class)));
+        panelBotones.add(crearBoton("Privilegio a Usuario", e -> abrir(VentanaPrivilegioUsuario.class)));
+        panelBotones.add(crearBoton("Privilegio a Rol", e -> abrir(VentanaPrivilegioRol.class)));
+        panelBotones.add(crearBoton("Revocar Privilegio", e -> abrir(VentanaRevocarPrivilegio.class)));
+        panelBotones.add(crearBoton("Asignar Tablespace", e -> abrir(VentanaAsignarTablespace.class)));
 
         fondo.add(panelBotones, BorderLayout.CENTER);
 
@@ -48,7 +50,7 @@ public class VentanaSeguridad extends JFrame {
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 25));
         pie.setOpaque(false);
 
-        JButton btnRegresar = crearBotonInferior("⏪ Volver al Menú Principal", new Color(190, 50, 50));
+        JButton btnRegresar = crearBotonInferior("Volver al Menú Principal", new Color(190, 50, 50));
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaPrincipal().setVisible(true);
@@ -60,10 +62,10 @@ public class VentanaSeguridad extends JFrame {
         setVisible(true);
     }
 
-    // === BOTÓN MODERNO PEQUEÑO ===
+    // === BOTÓN MODERNO ===
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18)); // fuente más grande
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
@@ -72,7 +74,6 @@ public class VentanaSeguridad extends JFrame {
         boton.setPreferredSize(new Dimension(220, 55));
         boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
-        // Bordes redondeados
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -84,11 +85,11 @@ public class VentanaSeguridad extends JFrame {
             }
         });
 
-        // Hover luminoso
         boton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(new Color(0, 180, 255));
             }
+
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(new Color(0, 140, 255));
             }
@@ -123,6 +124,7 @@ public class VentanaSeguridad extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(colorBase.brighter());
             }
+
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(colorBase);
             }
@@ -189,11 +191,14 @@ public class VentanaSeguridad extends JFrame {
 
         private static class Nodo {
             double x, y, vx, vy;
+
             Nodo(double x, double y, double vel) {
-                this.x = x; this.y = y;
+                this.x = x;
+                this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
             }
+
             double dist(Nodo o) {
                 double dx = x - o.x, dy = y - o.y;
                 return Math.sqrt(dx * dx + dy * dy);
