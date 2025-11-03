@@ -35,23 +35,46 @@ public class VentanaRevocarPrivilegio extends JFrame {
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
         // === Panel central ===
-        JPanel panelCentral = new JPanel(new GridLayout(3, 2, 25, 25));
+        JPanel panelCentral = new JPanel(new GridBagLayout());
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(140, 400, 140, 400));
-
-        panelCentral.add(crearLabel("Usuario:"));
-        txtUsuario = crearCampoTexto();
-        panelCentral.add(txtUsuario);
-
-        panelCentral.add(crearLabel("Privilegio (SELECT, INSERT, UPDATE, DELETE):"));
-        txtPrivilegio = crearCampoTexto();
-        panelCentral.add(txtPrivilegio);
-
-        panelCentral.add(crearLabel("Tabla destino:"));
-        txtTabla = crearCampoTexto();
-        panelCentral.add(txtTabla);
-
         fondo.add(panelCentral, BorderLayout.CENTER);
+
+        // === Card visual ===
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setOpaque(true);
+        card.setBackground(new Color(255, 255, 255, 25)); // semitransparente
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255, 120), 1, true),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 10, 15, 10);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // === Campo Usuario ===
+        gbc.gridx = 0; gbc.gridy = 0;
+        card.add(crearLabel("Usuario:"), gbc);
+        gbc.gridx = 1;
+        txtUsuario = crearCampoTexto();
+        card.add(txtUsuario, gbc);
+
+        // === Campo Privilegio ===
+        gbc.gridx = 0; gbc.gridy = 1;
+        card.add(crearLabel("Privilegio (SELECT, INSERT, UPDATE, DELETE):"), gbc);
+        gbc.gridx = 1;
+        txtPrivilegio = crearCampoTexto();
+        card.add(txtPrivilegio, gbc);
+
+        // === Campo Tabla ===
+        gbc.gridx = 0; gbc.gridy = 2;
+        card.add(crearLabel("Tabla destino:"), gbc);
+        gbc.gridx = 1;
+        txtTabla = crearCampoTexto();
+        card.add(txtTabla, gbc);
+
+        panelCentral.add(card, new GridBagConstraints());
 
         // === Pie de botones ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
@@ -89,13 +112,9 @@ public class VentanaRevocarPrivilegio extends JFrame {
             OperacionResultado res = seguridad.revocarPrivilegioTabla(usuario, tabla, privilegio);
 
             if (res.isExito()) {
-                JOptionPane.showMessageDialog(this,
-                        res.getMensaje(),
-                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, res.getMensaje(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this,
-                        res.getMensaje(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, res.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception ex) {
@@ -107,30 +126,37 @@ public class VentanaRevocarPrivilegio extends JFrame {
 
     // === Componentes reutilizables ===
     private JLabel crearLabel(String texto) {
-        JLabel label = new JLabel(texto, JLabel.RIGHT);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        campo.setPreferredSize(new Dimension(220, 32));
+        campo.setMaximumSize(new Dimension(220, 32));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        campo.setBackground(new Color(240, 245, 250));
+        campo.setForeground(Color.BLACK);
         return campo;
     }
 
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(250, 55));
-        boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        boton.setPreferredSize(new Dimension(200, 40));
 
-        // Botón redondeado con efecto hover
+        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -146,23 +172,24 @@ public class VentanaRevocarPrivilegio extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(new Color(0, 180, 255));
             }
-
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(new Color(0, 140, 255));
             }
         });
+
         return boton;
     }
 
     private JButton crearBotonInferior(String texto, Color colorBase) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(220, 50));
+        boton.setPreferredSize(new Dimension(200, 40));
 
+        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -178,7 +205,6 @@ public class VentanaRevocarPrivilegio extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(colorBase.brighter());
             }
-
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(colorBase);
             }
@@ -199,8 +225,7 @@ public class VentanaRevocarPrivilegio extends JFrame {
 
             Timer timer = new Timer(40, e -> {
                 for (Nodo n : nodos) {
-                    n.x += n.vx;
-                    n.y += n.vy;
+                    n.x += n.vx; n.y += n.vy;
                     if (n.x < 0 || n.x > 1920) n.vx *= -1;
                     if (n.y < 0 || n.y > 1080) n.vy *= -1;
                 }
@@ -218,17 +243,6 @@ public class VentanaRevocarPrivilegio extends JFrame {
                     getWidth(), getHeight(), new Color(0, 40, 70));
             g2.setPaint(grad);
             g2.fillRect(0, 0, getWidth(), getHeight());
-
-            g2.setColor(new Color(0, 120, 255, 40));
-            for (Nodo n1 : nodos)
-                for (Nodo n2 : nodos)
-                    if (n1.dist(n2) < 150)
-                        g2.drawLine((int) n1.x, (int) n1.y, (int) n2.x, (int) n2.y);
-
-            for (Nodo n : nodos) {
-                g2.setColor(new Color(0, 200, 255, 150));
-                g2.fillOval((int) n.x, (int) n.y, 6, 6);
-            }
         }
 
         private static class Nodo {
@@ -237,10 +251,6 @@ public class VentanaRevocarPrivilegio extends JFrame {
                 this.x = x; this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
-            }
-            double dist(Nodo o) {
-                double dx = x - o.x, dy = y - o.y;
-                return Math.sqrt(dx * dx + dy * dy);
             }
         }
     }
