@@ -25,27 +25,50 @@ public class VentanaEliminarRol extends JFrame {
         fondo.setLayout(new BorderLayout());
         setContentPane(fondo);
 
+        // === Título ===
         JLabel lblTitulo = new JLabel("Eliminar Rol del Sistema", JLabel.CENTER);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 30));
         lblTitulo.setForeground(new Color(0, 220, 255));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        JPanel panelCentral = new JPanel(new GridLayout(2, 2, 20, 20));
+        // === Panel central ===
+        JPanel panelCentral = new JPanel(new GridBagLayout());
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(100, 400, 100, 400));
-
-        panelCentral.add(crearLabel("Nombre del Rol:"));
-        txtRol = crearCampoTexto();
-        panelCentral.add(txtRol);
-
         fondo.add(panelCentral, BorderLayout.CENTER);
 
+        // === Card visual ===
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setOpaque(true);
+        card.setBackground(new Color(255, 255, 255, 25)); // semitransparente
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255, 120), 1, true),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 10, 15, 10);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // === Campo Nombre del Rol ===
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        card.add(crearLabel("Nombre del Rol:"), gbc);
+
+        gbc.gridx = 1;
+        txtRol = crearCampoTexto();
+        card.add(txtRol, gbc);
+
+        panelCentral.add(card, new GridBagConstraints());
+
+        // === Panel inferior ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         pie.setOpaque(false);
 
         JButton btnEliminar = crearBoton("Eliminar Rol", e -> eliminarRol());
         JButton btnRegresar = crearBotonInferior("Volver", new Color(190, 50, 50));
+
         btnRegresar.addActionListener(e -> {
             dispose();
             new VentanaSeguridad().setVisible(true);
@@ -58,21 +81,28 @@ public class VentanaEliminarRol extends JFrame {
         setVisible(true);
     }
 
+    // === Acción principal ===
     private void eliminarRol() {
         String rol = txtRol.getText().trim();
+
         if (rol.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de rol.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Debe ingresar un nombre de rol.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // ✅ Nueva implementación con OperacionResultado
         try {
             OperacionResultado res = seguridad.eliminarRol(rol);
 
             if (res.isExito()) {
-                JOptionPane.showMessageDialog(this, res.getMensaje(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        res.getMensaje(),
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, res.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        res.getMensaje(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception ex) {
@@ -82,30 +112,39 @@ public class VentanaEliminarRol extends JFrame {
         }
     }
 
-    // === Componentes visuales reutilizables ===
+    // === Componentes reutilizables ===
     private JLabel crearLabel(String texto) {
-        JLabel label = new JLabel(texto, JLabel.RIGHT);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        campo.setPreferredSize(new Dimension(220, 32));
+        campo.setMaximumSize(new Dimension(220, 32));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        campo.setBackground(new Color(240, 245, 250));
+        campo.setForeground(Color.BLACK);
         return campo;
     }
 
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(220, 55));
+        boton.setPreferredSize(new Dimension(200, 40));
 
+        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -121,23 +160,24 @@ public class VentanaEliminarRol extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 boton.setBackground(new Color(0, 180, 255));
             }
-
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(new Color(0, 140, 255));
             }
         });
+
         return boton;
     }
 
     private JButton crearBotonInferior(String texto, Color colorBase) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(220, 50));
+        boton.setPreferredSize(new Dimension(200, 40));
 
+        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -170,6 +210,7 @@ public class VentanaEliminarRol extends JFrame {
             setBackground(new Color(10, 12, 18));
             for (int i = 0; i < 40; i++)
                 nodos.add(new Nodo(rand.nextInt(1920), rand.nextInt(1080), rand.nextInt(2) + 1));
+
             Timer timer = new Timer(40, e -> {
                 for (Nodo n : nodos) {
                     n.x += n.vx; n.y += n.vy;
@@ -190,17 +231,6 @@ public class VentanaEliminarRol extends JFrame {
                     getWidth(), getHeight(), new Color(0, 40, 70));
             g2.setPaint(grad);
             g2.fillRect(0, 0, getWidth(), getHeight());
-
-            g2.setColor(new Color(0, 120, 255, 40));
-            for (Nodo n1 : nodos)
-                for (Nodo n2 : nodos)
-                    if (n1.dist(n2) < 150)
-                        g2.drawLine((int) n1.x, (int) n1.y, (int) n2.x, (int) n2.y);
-
-            for (Nodo n : nodos) {
-                g2.setColor(new Color(0, 200, 255, 150));
-                g2.fillOval((int) n.x, (int) n.y, 6, 6);
-            }
         }
 
         private static class Nodo {
@@ -209,10 +239,6 @@ public class VentanaEliminarRol extends JFrame {
                 this.x = x; this.y = y;
                 this.vx = vel * (Math.random() > 0.5 ? 1 : -1);
                 this.vy = vel * (Math.random() > 0.5 ? 1 : -1);
-            }
-            double dist(Nodo o) {
-                double dx = x - o.x, dy = y - o.y;
-                return Math.sqrt(dx * dx + dy * dy);
             }
         }
     }

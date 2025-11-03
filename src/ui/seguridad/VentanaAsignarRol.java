@@ -33,20 +33,49 @@ public class VentanaAsignarRol extends JFrame {
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === Panel central con formulario ===
-        JPanel panelCentral = new JPanel(new GridLayout(2, 2, 25, 25));
+        // === Panel central con formulario (compacto) ===
+        JPanel panelCentral = new JPanel(new GridBagLayout());
         panelCentral.setOpaque(false);
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(120, 400, 120, 400));
-
-        panelCentral.add(crearLabel("Usuario:"));
-        txtUsuario = crearCampoTexto();
-        panelCentral.add(txtUsuario);
-
-        panelCentral.add(crearLabel("Rol:"));
-        txtRol = crearCampoTexto();
-        panelCentral.add(txtRol);
-
         fondo.add(panelCentral, BorderLayout.CENTER);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+        // Panel “card” semitransparente
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setOpaque(true);
+        card.setBackground(new Color(255, 255, 255, 30));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255, 120), 1, true),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+
+        GridBagConstraints inner = new GridBagConstraints();
+        inner.insets = new Insets(12, 12, 12, 12);
+        inner.fill = GridBagConstraints.HORIZONTAL;
+        inner.gridx = 0; inner.gridy = 0;
+
+        // === Campo Usuario ===
+        JLabel lblUsuario = crearLabel("Usuario:");
+        card.add(lblUsuario, inner);
+
+        inner.gridx = 1;
+        txtUsuario = crearCampoTexto();
+        card.add(txtUsuario, inner);
+
+        // === Campo Rol ===
+        inner.gridx = 0; inner.gridy++;
+        JLabel lblRol = crearLabel("Rol:");
+        card.add(lblRol, inner);
+
+        inner.gridx = 1;
+        txtRol = crearCampoTexto();
+        card.add(txtRol, inner);
+
+        // Agregar la “card” al centro
+        panelCentral.add(card, gbc);
 
         // === Panel inferior con botones ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
@@ -100,28 +129,36 @@ public class VentanaAsignarRol extends JFrame {
 
     // === Componentes visuales reutilizables ===
     private JLabel crearLabel(String texto) {
-        JLabel label = new JLabel(texto, JLabel.RIGHT);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        campo.setPreferredSize(new Dimension(220, 32));
+        campo.setMinimumSize(new Dimension(220, 32));
+        campo.setMaximumSize(new Dimension(220, 32));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 140, 255), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        campo.setBackground(new Color(240, 245, 250));
+        campo.setForeground(Color.BLACK);
         return campo;
     }
 
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(250, 55));
-        boton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        boton.setPreferredSize(new Dimension(200, 40));
 
         // Botón redondeado y hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
@@ -149,12 +186,12 @@ public class VentanaAsignarRol extends JFrame {
 
     private JButton crearBotonInferior(String texto, Color colorBase) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
         boton.setForeground(Color.WHITE);
         boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(220, 50));
+        boton.setPreferredSize(new Dimension(200, 40));
 
         // Botón redondeado y hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
