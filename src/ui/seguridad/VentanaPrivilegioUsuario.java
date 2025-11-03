@@ -1,6 +1,7 @@
 package ui.seguridad;
 
 import modulos.Seguridad;
+import modulos.Tablespaces;
 import modulos.OperacionResultado;
 import ui.VentanaSeguridad;
 
@@ -17,6 +18,9 @@ public class VentanaPrivilegioUsuario extends JFrame {
     private JTextField txtPrivilegio;
     private JTextField txtTabla;
     private Seguridad seguridad = new Seguridad();
+    private Tablespaces tablespaces = new Tablespaces();
+    private String selectedTablespace = null;
+    private JPanel selectedCard = null;
 
     public VentanaPrivilegioUsuario() {
         setTitle("Asignar Privilegio a Usuario - Oracle XE");
@@ -34,47 +38,51 @@ public class VentanaPrivilegioUsuario extends JFrame {
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 10, 20, 10));
         fondo.add(lblTitulo, BorderLayout.NORTH);
 
-        // === Panel central ===
-        JPanel panelCentral = new JPanel(new GridBagLayout());
+        // === Panel principal ===
+        JPanel panelCentral = new JPanel(new BorderLayout());
         panelCentral.setOpaque(false);
-        fondo.add(panelCentral, BorderLayout.CENTER);
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
 
-        // === Card visual ===
-        JPanel card = new JPanel(new GridBagLayout());
-        card.setOpaque(true);
-        card.setBackground(new Color(255, 255, 255, 25)); // Semitransparente
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(0, 140, 255, 120), 1, true),
-                BorderFactory.createEmptyBorder(30, 40, 30, 40)
-        ));
+        // === Campos de formulario ===
+        JPanel formPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        formPanel.setOpaque(false);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 250, 30, 250));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 10, 15, 10);
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-
-        // === Campo Usuario ===
-        gbc.gridx = 0; gbc.gridy = 0;
-        card.add(crearLabel("Usuario:"), gbc);
-        gbc.gridx = 1;
+        formPanel.add(crearLabel("Usuario:"));
         txtUsuario = crearCampoTexto();
-        card.add(txtUsuario, gbc);
+        formPanel.add(txtUsuario);
 
-        // === Campo Privilegio ===
-        gbc.gridx = 0; gbc.gridy = 1;
-        card.add(crearLabel("Privilegio (SELECT, INSERT, UPDATE, DELETE):"), gbc);
-        gbc.gridx = 1;
+        formPanel.add(crearLabel("Privilegio (SELECT, INSERT, UPDATE, DELETE):"));
         txtPrivilegio = crearCampoTexto();
-        card.add(txtPrivilegio, gbc);
+        formPanel.add(txtPrivilegio);
 
-        // === Campo Tabla ===
-        gbc.gridx = 0; gbc.gridy = 2;
-        card.add(crearLabel("Tabla destino:"), gbc);
-        gbc.gridx = 1;
-        txtTabla = crearCampoTexto();
-        card.add(txtTabla, gbc);
+        panelCentral.add(formPanel, BorderLayout.NORTH);
 
-        panelCentral.add(card, new GridBagConstraints());
+        // === Sección de tablespaces disponibles ===
+        JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 25));
+        cardsPanel.setOpaque(false);
+
+        List<String> lista = tablespaces.listarTablespaces();
+        if (lista.isEmpty()) {
+            JLabel lblVacio = new JLabel("No hay tablespaces disponibles.", JLabel.CENTER);
+            lblVacio.setFont(new Font("Segoe UI", Font.ITALIC, 18));
+            lblVacio.setForeground(Color.LIGHT_GRAY);
+            cardsPanel.add(lblVacio);
+        } else {
+            for (String info : lista) {
+                JPanel card = crearCard(info);
+                cardsPanel.add(card);
+            }
+        }
+
+        JScrollPane scroll = new JScrollPane(cardsPanel);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(20);
+        panelCentral.add(scroll, BorderLayout.CENTER);
+
+        fondo.add(panelCentral, BorderLayout.CENTER);
 
         // === Pie de botones ===
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
@@ -95,24 +103,78 @@ public class VentanaPrivilegioUsuario extends JFrame {
         setVisible(true);
     }
 
+    // === Crear tarjeta visual de tablespace ===
+    private JPanel crearCard(String info) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setPreferredSize(new Dimension(260, 110));
+        card.setBackground(new Color(15, 25, 45));
+        card.setBorder(BorderFactory.createLineBorder(new Color(0, 150, 255), 2, true));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JLabel lblInfo = new JLabel("<html><center>" + info.replace(" | ", "<br>") + "</center></html>", JLabel.CENTER);
+        lblInfo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        lblInfo.setForeground(Color.WHITE);
+        card.add(lblInfo, BorderLayout.CENTER);
+
+        // Efectos de hover y selección
+        card.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                card.setBackground(new Color(25, 35, 65));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                if (!card.equals(selectedCard)) {
+                    card.setBackground(new Color(15, 25, 45));
+                }
+            }
+
+            public void mouseClicked(MouseEvent e) {
+                seleccionarCard(card, info);
+            }
+        });
+
+        return card;
+    }
+
+    private void seleccionarCard(JPanel card, String info) {
+        if (selectedCard != null) {
+            selectedCard.setBackground(new Color(15, 25, 45));
+        }
+        card.setBackground(new Color(0, 120, 255));
+        selectedCard = card;
+
+        String[] partes = info.split("\\|");
+        selectedTablespace = partes[0].trim();
+    }
+
     // === Acción principal ===
     private void asignarPrivilegio() {
         String usuario = txtUsuario.getText().trim();
         String privilegio = txtPrivilegio.getText().trim();
-        String tabla = txtTabla.getText().trim();
 
-        if (usuario.isEmpty() || privilegio.isEmpty() || tabla.isEmpty()) {
+        if (usuario.isEmpty() || privilegio.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Debe ingresar el usuario, el privilegio y la tabla destino.",
+                    "Debe ingresar el usuario y el privilegio.",
                     "Campos incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        if (selectedTablespace == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar el tablespace o tabla sobre la cual se asignará el privilegio.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
-            OperacionResultado res = seguridad.asignarPrivilegioTabla(usuario, tabla, privilegio);
+            // 🟢 El tablespace seleccionado se usa como tabla destino
+            OperacionResultado res = seguridad.asignarPrivilegioTabla(usuario, selectedTablespace, privilegio);
 
             if (res.isExito()) {
-                JOptionPane.showMessageDialog(this, res.getMensaje(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Privilegio '" + privilegio + "' asignado al usuario '" + usuario +
+                                "' sobre '" + selectedTablespace + "'.",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, res.getMensaje(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -127,16 +189,15 @@ public class VentanaPrivilegioUsuario extends JFrame {
     // === Componentes reutilizables ===
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         label.setForeground(Color.WHITE);
         return label;
     }
 
     private JTextField crearCampoTexto() {
         JTextField campo = new JTextField();
-        campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        campo.setPreferredSize(new Dimension(220, 32));
-        campo.setMaximumSize(new Dimension(220, 32));
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        campo.setPreferredSize(new Dimension(240, 35));
         campo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(0, 140, 255), 1, true),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -148,15 +209,14 @@ public class VentanaPrivilegioUsuario extends JFrame {
 
     private JButton crearBoton(String texto, ActionListener action) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
         boton.setForeground(Color.WHITE);
         boton.setBackground(new Color(0, 140, 255));
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.addActionListener(action);
-        boton.setPreferredSize(new Dimension(200, 40));
+        boton.setPreferredSize(new Dimension(250, 50));
 
-        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -176,20 +236,18 @@ public class VentanaPrivilegioUsuario extends JFrame {
                 boton.setBackground(new Color(0, 140, 255));
             }
         });
-
         return boton;
     }
 
     private JButton crearBotonInferior(String texto, Color colorBase) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
+        boton.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 17));
         boton.setForeground(Color.WHITE);
         boton.setBackground(colorBase);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(200, 40));
+        boton.setPreferredSize(new Dimension(220, 50));
 
-        // Redondeado + hover
         boton.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -239,21 +297,17 @@ public class VentanaPrivilegioUsuario extends JFrame {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Fondo con gradiente azul oscuro
             GradientPaint grad = new GradientPaint(0, 0, new Color(5, 10, 25),
                     getWidth(), getHeight(), new Color(0, 40, 70));
             g2.setPaint(grad);
             g2.fillRect(0, 0, getWidth(), getHeight());
 
-            // === Líneas entre nodos cercanos ===
             g2.setColor(new Color(0, 120, 255, 40));
             for (Nodo n1 : nodos)
                 for (Nodo n2 : nodos)
                     if (n1.dist(n2) < 150)
                         g2.drawLine((int) n1.x, (int) n1.y, (int) n2.x, (int) n2.y);
 
-            // === Nodos (puntos) ===
             for (Nodo n : nodos) {
                 g2.setColor(new Color(0, 200, 255, 150));
                 g2.fillOval((int) n.x, (int) n.y, 6, 6);
